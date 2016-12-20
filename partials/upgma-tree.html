@@ -1,0 +1,25 @@
+<div ng-controller='upgma-treeController'>
+	
+
+
+	<div class = "treeSet"layout="row" layout-align="space-around center">
+
+	
+	<div layout="column" layout-align="center center" ng-repeat = "model in matrix"  id="DNA-model" ng-model="model" ng-hide="!model.name" >
+		
+		<div class="md-button md-primary md-hue-1" layout="row" style="height:60px" ng-click=''>
+			<img class="image_button" ng-src="./images/{{model.name}}.png" >
+			<div flex>{{model.name}} </div>
+
+		</div>
+		<div layout="row">
+			<div ng-repeat = "letter in model.DNA track by $index" flex ng-style="lettercolor(letter)">{{letter}} </div>
+		</div>
+	
+		
+	</div>
+
+	</div>
+
+
+</div>

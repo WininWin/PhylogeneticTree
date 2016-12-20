@@ -1,0 +1,25 @@
+<div ng-controller='upgma-matrixController'>
+	<div layout="row" layout-align="center" class="treeSet md-title">Distance Matrix</div>
+
+	<md-table-container >
+  <table id="distance-table" md-table ng-model="matrix">
+    <thead md-head >
+      <tr md-row>
+        <th md-column >Species</th>
+        <th md-column  ng-repeat="(key,item) in matrix"><span>{{item.name}}</span></th>
+      </tr>
+    </thead>
+    <tbody md-body>
+    	<tr md-row ng-repeat="item in matrix">
+    		<td md-cell>
+    			{{item.name}}
+    		</td>
+    		<td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">{{distance}}
+    		</td>
+
+    	</tr>
+    	
+    </tbody>
+  </table>
+</md-table-container>
+</div>
