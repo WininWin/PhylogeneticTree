@@ -91,12 +91,22 @@ $urlRouterProvider.otherwise('/');
 	  		}
 
 	  	}
-	  })
+	  });
 	 
 
-
-
-
-
-
 }]);
+
+app.directive('ngX', function() {
+        return function(scope, elem, attrs) {
+            attrs.$observe('ngX', function(x) {
+                elem.attr('cx', x);
+            });
+        };
+    })
+    .directive('ngY', function() {
+        return function(scope, elem, attrs) {
+            attrs.$observe('ngY', function(y) {
+                elem.attr('cy', y);
+            });
+        };
+    });

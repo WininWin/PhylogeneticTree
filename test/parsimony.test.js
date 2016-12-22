@@ -2,11 +2,11 @@ describe('Parismony Test', function() {
   beforeEach(module('TreeServices'));
   
   // Factory of interest is called MyFactory
-  describe('TreeModel Test', function() {
-    var TreeModel = null;
+  describe('ParsimonyModel Test', function() {
+    var ParsimonyModel = null;
     beforeEach(function () {
         angular.mock.inject(function ($injector) {
-            TreeModel = $injector.get('ParsimonyModel');
+            ParsimonyModel = $injector.get('ParsimonyModel');
         });
 
 
@@ -15,13 +15,13 @@ describe('Parismony Test', function() {
    
 
     it('Sets length should be 4', function() {
-      var sets = TreeModel.makeSet();
+      var sets = ParsimonyModel.makeSet();
       expect(sets.length).toEqual(4);
     });
 
     it('Info Sets should have 3 sets ', function() {
-      var sets = TreeModel.makeSet();
-      var info_set = TreeModel.getInfoSet(sets);
+      var sets = ParsimonyModel.makeSet();
+      var info_set = ParsimonyModel.getInfoSet(sets);
       var keys_length = Object.keys(info_set).length;
 
       expect(keys_length).toEqual(3);
@@ -29,15 +29,15 @@ describe('Parismony Test', function() {
     });
 
     it('Check Tree scores on given sets', function() {
-        spyOn(TreeModel, 'makeSet').and.returnValue([
+        spyOn(ParsimonyModel, 'makeSet').and.returnValue([
             {"title" : 'Human', "DNA" : 'CTGGCC'},
             {"title" : 'Dog', "DNA" : 'CTAGCC'},
             {"title" : 'Mushroom', "DNA" : 'CTGGAG'},
             {"title" : 'Tulip', "DNA" : 'TTAGAG'}
             ]);
-        var sets = TreeModel.makeSet();
-         var info_sets = TreeModel.getInfoSet(sets);
-         var scores = TreeModel.getTreeScores(info_sets);
+        var sets = ParsimonyModel.makeSet();
+         var info_sets = ParsimonyModel.getInfoSet(sets);
+         var scores = ParsimonyModel.getTreeScores(info_sets);
 
           expect(scores.length).toEqual(3);
           expect(scores[0]).toEqual([2,1,1]);
