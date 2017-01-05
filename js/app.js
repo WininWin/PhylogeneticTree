@@ -1,4 +1,4 @@
-var app = angular.module('PhylogeneticTree',['TreeControllers','TreeServices','ui.router', 'ngMaterial','ngDragDrop', 'md.data.table']);
+var app = angular.module('PhylogeneticTree',['TreeControllers','TreeServices','ui.router', 'ngMaterial','ngDragDrop', 'md.data.table','ngAnimate']);
 
 app.config(['$stateProvider', '$urlRouterProvider', '$mdThemingProvider', function($stateProvider, $urlRouterProvider, $mdThemingProvider) {
 
@@ -109,4 +109,19 @@ app.directive('ngX', function() {
                 elem.attr('cy', y);
             });
         };
-    });
+    })
+    .directive("mathjaxBind", function() {
+    return {
+        restrict: "A",
+        controller: ["$scope", "$element", "$attrs",
+                function($scope, $element, $attrs) {
+            $scope.$watch($attrs.mathjaxBind, function(texExpression) {
+                var texScript = angular.element("<script type='math/tex'>")
+                    .html(texExpression ? texExpression :  "");
+                $element.html("");
+                $element.append(texScript);
+                MathJax.Hub.Queue(["Reprocess", MathJax.Hub, $element[0]]);
+            });
+        }]
+    };
+});

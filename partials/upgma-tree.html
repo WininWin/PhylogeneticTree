@@ -59,7 +59,7 @@
 
 						  <!-- Points -->
 
-						  <circle ng-x="{{x[0]}}" ng-y="310" r="4" fill="red" ng-repeat="x in points"/>
+						  <circle ng-x="{{x[0]}}" ng-y="310" r="4" fill="red" ng-repeat="x in init_points"/>
 					</svg>
 					</div>
 	<div class = "treeSet"layout="row" layout-align="space-around center">
@@ -81,8 +81,19 @@
 
 	</div>
 
-	<div layout="row" layout-align="center center">
-  <div class="md-subhead" ng-model="info">{{info}}</div>
+	<div layout="column" layout-align="center center">
+  <div id="site-select" class = "treeSet" layout="row" layout-align="center" ng-hide="!height_info">
+        {{height_info}}
+      </div>
+
+       <div id="site-select" class = "treeSet" layout="row" layout-align="center" ng-hide="!height_info">
+       	Updated set of clusters : &nbsp
+        <div ng-repeat="item in matrix"> {{item.name}} 	&nbsp</div>
+      </div>
+
+      <div id="site-select" class = "treeSet" layout="row" layout-align="center" ng-hide="!tree_info">
+        {{tree_info}}
+      </div>
   
 </div>	
 

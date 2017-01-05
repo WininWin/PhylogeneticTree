@@ -10,15 +10,18 @@
 	border-bottom: 2px solid lightgreen;
 }
 
+
+
 .main-info{
 	margin-top: 150px;
 	text-align: center;
+	padding-bottom: 400px;
 }
 
 .main-game-box{
 	
 	width : 750px;
-	height : 900px;
+	
 	
 
 }
@@ -96,3 +99,23 @@
 	text-align: center;
 	font-size: 14pt;
 }
+
+ #distance-table > tbody > tr > td > #table-input > input{
+	width: 50px;
+	text-align: center;
+}
+
+.default{
+    opacity: 1;
+}
+
+.fade{
+    -webkit-transition: opacity 2s; /* For Safari 3.1 to 6.0 */
+    transition: opacity 2s;
+    opacity: 0;
+}
+
+.upgma-curr-step{
+	border: 2px solid lightgreen;
+}
+

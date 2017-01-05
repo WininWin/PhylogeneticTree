@@ -328,16 +328,55 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 
 	
 
+	$scope.init_start_point_y = 310;
+
+	$scope.upgmarefresh = function(){
+		$state.go('app.upgma');
+
+		angular.element(document.getElementsByClassName('add-line')).remove();
+		angular.element(document.getElementsByClassName('node-circle')).remove();
+
+		init();
+			$rootScope.matrix_is_sovled ={};
+	$rootScope.user_input = {};
+
+	for(var key in $rootScope.matrix){
+		$rootScope.matrix_is_sovled[key]= {};
+		$rootScope.user_input[key] = {};
+		for(var in_key in $rootScope.matrix[key]){
+			if(in_key==='name' || in_key==='DNA'){
+				continue;
+			}
+
+			$rootScope.matrix_is_sovled[key][in_key] = true;
+		}
+	}
+
+		
+
+			$rootScope.tempmodel = {};
+
+	for(var key in $rootScope.matrix){
+		$rootScope.tempmodel[key] = $rootScope.matrix[key];
+	}
+
+
+	};
 
 	var bts = function button_select(key){
 
-		console.log(key);
+		
 
 		$scope.selected_style[key] = {
-			'border' : '3px solid Green'
+			'border' : '3px solid Blue',
+			'fill' : 'blue'
 		}
 
 		$rootScope.button_count++;
+		if($rootScope.button_count > 2){
+			$rootScope.button_count = 2;
+		}
+
 
 		$scope.selected_button[key] = true;
 
@@ -353,10 +392,14 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
             return el;
         }
 
-	$rootScope.matrix = UPGMAModel.getDistanceMatrix();
+	function init(){
+			$rootScope.matrix = UPGMAModel.getDistanceMatrix();
 	$scope.minimum_pair = UPGMAModel.getMinimumPair($rootScope.matrix);
 	$rootScope.button_count = 0;
-	$scope.info = "";
+	$scope.tree_info = "";
+
+	$scope.height_info = "";
+
 	$scope.selected_button = {
 		'A' : false,
 		'B' : false,
@@ -371,66 +414,136 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 		'D' : {}
 	};
 
+	$scope.init_points = {
+		'A' : [100, 310],
+		'B' : [280, 310],
+		'C' : [460, 310],
+		'D' : [640, 310]
+	};
+
 	$scope.points = {
 		'A' : [100, 310],
 		'B' : [280, 310],
 		'C' : [460, 310],
 		'D' : [640, 310]
-	}
+	};
 
 	$scope.height = 0;
+	$rootScope.is_solved = true;
+	$scope.max_height = 0;
+
+	$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
+	$scope.subInst = "You should remember the distance matrix before step 2";
+	angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
+
+	$scope.$watch('is_solved', function(newValue, oldValue){
+		var keys = Object.keys($rootScope.matrix);
+		if(keys.length !== 1){
+			if(newValue){
+				$scope.equation = "";
+				$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
+				$scope.subInst = "You should remember the distance matrix before step 2";
+				angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
+				angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
+			}
+			else{
+				$scope.upgmaInst = "Step 2 : Fill out the new distance matrix";
+				$scope.subInst = "Calcualte: ";
+				$scope.equation = "\\quad d_{k,l} \\quad for \\quad all \\quad l, where \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}"
+				angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
+				angular.element(document.getElementById('matrix-view')).addClass("upgma-curr-step");
+			}
+		}
+		else{
+			$scope.upgmaInst = "UPGMA tree for " + $rootScope.matrix[keys[0]].name;
+			angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
+			angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
+			
+		}
+			
+	}, true);
 
 	$scope.$watch('selected_button', function(newValue, oldValue){
+
+		//	var is_solved = true;
+		
 
 		
 		var check_key = "";
 		var keys = [];
+		var not_selected_keys = [];
+
 		if($rootScope.button_count === 2){
 			for(var key in newValue){
 				if(newValue[key]){
 					keys.push(key);
 
 				}
+				else{
+					not_selected_keys.push(key);
+				}
 			}
 
 			check_key = keys.join('');
 
-			console.log(keys);
-			console.log(check_key);
-			console.log($scope.minimum_pair);
-
-			if(($scope.minimum_pair).indexOf(check_key)!== -1){
+			if(($scope.minimum_pair).indexOf(check_key)!== -1 && $rootScope.is_solved){
 				$scope.height = $rootScope.matrix[keys[0]][keys[1]]/2;
+
+				
 				UPGMAModel.updateMatrix($rootScope.matrix, $rootScope.matrix[keys[0]], $rootScope.matrix[keys[1]]);
 			
-
+				$scope.height_info = "Height for " + $rootScope.matrix[check_key].name + ": " + $scope.height;
 
 				for(var i = 0; i < keys.length; i++){
 					newValue[keys[i]] = false;
 					$scope.selected_style[keys[i]] = {};
+					delete $rootScope.matrix_is_sovled[keys[i]];
+					delete $scope.selected_button[keys[i]];
 				}
 
-				newValue[check_key] = false;
+				$rootScope.matrix_is_sovled[check_key] = {};
+				$rootScope.user_input[check_key] = {};
+				for(var j = 0; j < not_selected_keys.length;j++){
+
+					if($rootScope.matrix_is_sovled[not_selected_keys[j]]){
+						$rootScope.matrix_is_sovled[not_selected_keys[j]][check_key] = false;
+						$rootScope.matrix_is_sovled[check_key][not_selected_keys[j]] = false;
+					}
+					
+				}
+
+				$rootScope.matrix_is_sovled[check_key][check_key] = true;
+				$scope.selected_button[check_key] = false;
 
 				var diff = Math.abs($scope.points[keys[0]][0] - $scope.points[keys[1]][0]);
 				var startpoint = $scope.points[keys[0]][0] > $scope.points[keys[1]][0]?$scope.points[keys[1]][0]:$scope.points[keys[0]][0];
 
-				var line_one = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[0]][0], y1 : ($scope.points[keys[0]][1] - ($scope.height*30)), y2: $scope.points[keys[0]][1], 'stroke-width' : 2, stroke : 'black'});
-				var line_two = makeSVG("line", {x1 : $scope.points[keys[1]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.points[keys[1]][1] - ($scope.height*30)), y2: $scope.points[keys[1]][1], 'stroke-width' : 2, stroke : 'black'});
-				var line_three = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.points[keys[1]][1] - ($scope.height*30)), y2 : ($scope.points[keys[1]][1] - ($scope.height*30)), 'stroke-width' : 2, stroke : 'black'});
-				var circle = makeSVG("circle", {"cx" : (startpoint+diff/2), "cy" : ($scope.points[keys[1]][1] - ($scope.height*30)) , r:"8" , fill:"green"});
+				var line_one = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[0]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2: $scope.points[keys[0]][1], 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
+				var line_two = makeSVG("line", {x1 : $scope.points[keys[1]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2: $scope.points[keys[1]][1], 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
+				var line_three = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2 : ($scope.init_start_point_y - ($scope.height*30)), 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
+				var circle = makeSVG("circle", {"cx" : (startpoint+diff/2), "cy" : ($scope.init_start_point_y - ($scope.height*30)) , r:"8" , fill:"green", class : "node-circle"});
 				
+				$scope.points[check_key] = [(startpoint+diff/2), ($scope.points[keys[1]][1] - ($scope.height*30))];
 
 				angular.element(document.getElementById('svg-layout')).append(line_one, line_two, line_three, circle);
 
 
 				 circle.onclick= function() {
+				 	if($rootScope.is_solved){
+				 		this.setAttribute('fill', 'blue');
+				 	}
+				 		
 			           bts(check_key);
+			           $scope.$apply();
 			      };
 				$scope.selected_style[check_key] = {};
-				$scope.info = "";
+				$scope.tree_info = "";
 				$rootScope.button_count = 0;
-
+				$scope.minimum_pair = UPGMAModel.getMinimumPair($rootScope.matrix);
+				$rootScope.is_solved = false;
+				if($scope.height > $scope.max_height){
+					$scope.max_height = $scope.height;
+				}
 
 			}
 
@@ -439,23 +552,85 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 					newValue[keys[i]] = false;
 					$scope.selected_style[keys[i]] = {};
 				}
-
-
-				$scope.info = "You did not select minimum pair!";
 				$rootScope.button_count = 0;
+				if(!$rootScope.is_solved){
+					$scope.tree_info = "You did not solve the distance matrix!";
+				}
+				else{
+					$scope.tree_info = "You did not select minimum pair!";
+					angular.element(document.getElementsByClassName('node-circle')).attr('fill', 'green');
+					}
+				
 			}
 
 
 		}
 
 	}, true);
+	}
+
+	init();
 
 }]);
 
-TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootScope','UPGMAModel', function($scope,$state, $rootScope, UPGMAModel) {
+TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootScope','UPGMAModel','$timeout' , function($scope,$state, $rootScope, UPGMAModel,$timeout) {
 
 	
-	
+	$rootScope.matrix_is_sovled ={};
+	$rootScope.user_input = {};
+
+	$scope.info = "";
+	$scope.hidden = true;
+	for(var key in $rootScope.matrix){
+		$rootScope.matrix_is_sovled[key]= {};
+		$rootScope.user_input[key] = {};
+		for(var in_key in $rootScope.matrix[key]){
+			if(in_key==='name' || in_key==='DNA'){
+				continue;
+			}
+
+			$rootScope.matrix_is_sovled[key][in_key] = true;
+		}
+	}
+
+
+	$scope.input_check = function(outkey, key){
+
+		
+		  $scope.hidden = false;
+		if($rootScope.user_input[outkey][key] == $rootScope.matrix[outkey][key]){
+			 $scope.startFade = true;
+			$scope.fontcolor = {'color' : 'Green'}
+			$scope.info = "Correct!";
+			$timeout(function(){
+			 $scope.startFade = false;
+            $scope.hidden = true;
+       			 }, 2000);
+			$rootScope.matrix_is_sovled[outkey][key] = true;
+			$rootScope.matrix_is_sovled[key][outkey] = true;
+			$rootScope.is_solved = true;
+			//check that the table is solved
+			for(var k in $rootScope.matrix_is_sovled){
+				for(var ik in $rootScope.matrix_is_sovled){
+					if(!$rootScope.matrix_is_sovled[k][ik]){
+				
+						$rootScope.is_solved = false;
+					}
+				}
+			}
+		}	
+
+		else{
+			$scope.fontcolor = {'color' : 'Red'}
+			$scope.info = "Wrong";
+			
+		}
+
+		
+        
+	}
+
+
 
 
 
@@ -463,10 +638,10 @@ TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootS
 
 TreeControllers.controller('upgma-treeController',['$scope', '$state', '$rootScope','UPGMAModel', function($scope,$state, $rootScope, UPGMAModel) {
 
-	$scope.tempmodel = {};
+	$rootScope.tempmodel = {};
 
 	for(var key in $rootScope.matrix){
-		$scope.tempmodel[key] = $rootScope.matrix[key];
+		$rootScope.tempmodel[key] = $rootScope.matrix[key];
 	}
 
 

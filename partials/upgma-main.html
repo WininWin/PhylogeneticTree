@@ -2,12 +2,27 @@
 	
 
 <div layout="column">
-  <div flex ui-view="matrix">
+	<div class="treeSet md-title" layout="row" id="upgma-inst" layout-align="center center">
+		{{upgmaInst}}
+	</div>
+
+	<div class="treeSet md-subhead" layout="row" id="sub-inst" layout-align="center center">
+		{{subInst}}
+			<span mathjax-bind="equation"></span>
+	</div>
+
+
+  <div id="matrix-view" flex ui-view="matrix">
   
   </div>
-  <div flex ui-view="tree">
+  <div id="tree-view" flex ui-view="tree">
   
   </div>
+
+  <div layout="column" layout-align="start start">
+		<div class="md-button md-raised md-primary" ng-click="upgmarefresh()">New Game</div>
+		
+	</div>
 </div>
 
 </div>

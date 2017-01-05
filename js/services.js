@@ -197,17 +197,16 @@ TreeServices.factory('UPGMAModel', function(){
 	function generate_Matrix(){
 		var random = Math.round(Math.random()*2);
 		var matrix = {
-			// names : [, setB_name[random], setC_name[random],setD_name[random]],
-			// DNA : [setA[random], setB[random], setC[random],setD[random]]
+			
 		};
 		
 			matrix['A'] = {
 				name : setA_name[random],
 				DNA : setA[random],
 				'A' : 0,
-				'B' : gen_random(1,5),
-				'C' : gen_random(6,5),
-				'D' : gen_random(6,5)
+				'B' : gen_random(3,5),
+				'C' : gen_random(8,5),
+				'D' : gen_random(8,5)
 			};
 
 			matrix['B'] = {
@@ -215,8 +214,8 @@ TreeServices.factory('UPGMAModel', function(){
 				DNA : setB[random],
 				'A' : 0,
 				'B' : 0,
-				'C' : gen_random(6,5),
-				'D' : gen_random(6,5)
+				'C' : gen_random(8,5),
+				'D' : gen_random(8,5)
 			};
 
 			matrix['C'] = {
@@ -225,7 +224,7 @@ TreeServices.factory('UPGMAModel', function(){
 				'A' : 0,
 				'B' : 0,
 				'C' : 0,
-				'D' : gen_random(1,5)
+				'D' : gen_random(3,5)
 			};
 
 			matrix['D'] ={

@@ -10,11 +10,14 @@
       </tr>
     </thead>
     <tbody md-body>
-    	<tr md-row ng-repeat="item in matrix">
+    	<tr md-row ng-repeat="(outkey, item) in matrix">
     		<td md-cell>
     			{{item.name}}
     		</td>
-    		<td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">{{distance}}
+    		<td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">
+
+          <div ng-if="matrix_is_sovled[outkey][key]">{{distance}}</div>
+          <div ng-if="!matrix_is_sovled[outkey][key]" id = "table-input" ><input ng-model="user_input[outkey][key]" type="text" ng-change = "input_check(outkey,key)"></div>
     		</td>
 
     	</tr>
@@ -22,4 +25,8 @@
     </tbody>
   </table>
 </md-table-container>
+
+  <div ng-style="fontcolor"id="site-select" class = "treeSet default" layout="row" layout-align="center" ng-hide="hidden" ng-class="{fade: startFade}">
+        {{info}}
+      </div>
 </div>
