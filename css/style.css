@@ -1,3 +1,5 @@
+
+
 #title{
 	border: 3px solid lightgreen;
 	text-align: center;
@@ -118,4 +120,11 @@
 .upgma-curr-step{
 	border: 2px solid lightgreen;
 }
-
+#svg-container { 
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	
+	vertical-align: middle; 
+	overflow: hidden; 
+}

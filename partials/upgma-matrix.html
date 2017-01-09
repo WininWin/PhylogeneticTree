@@ -1,5 +1,37 @@
 <div ng-controller='upgma-matrixController'>
 	<div layout="row" layout-align="center" class="treeSet md-title">Distance Matrix</div>
+<div ng-hide="is_solved" >
+  <div layout="row" layout-align="center" class="treeSet md-subhead">Old Matrix</div>
+   <md-table-container>
+  <table id="distance-table" md-table ng-model="old_matrix" >
+    <thead md-head >
+      <tr md-row>
+        <th md-column >Species</th>
+        <th md-column  ng-repeat="(key,item) in old_matrix"><span>{{item.name}}</span></th>
+      </tr>
+    </thead>
+    <tbody md-body>
+      <tr md-row ng-repeat="(outkey, item) in old_matrix">
+        <td md-cell>
+          {{item.name}}
+        </td>
+        <td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">
+
+          <div>{{distance}}</div>
+        
+        </td>
+
+      </tr>
+      
+    </tbody>
+  </table>
+</md-table-container>
+</div>
+ 
+
+<div>
+
+  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved">New Matrix</div>
 
 	<md-table-container >
   <table id="distance-table" md-table ng-model="matrix">
@@ -25,7 +57,7 @@
     </tbody>
   </table>
 </md-table-container>
-
+</div>
   <div ng-style="fontcolor"id="site-select" class = "treeSet default" layout="row" layout-align="center" ng-hide="hidden" ng-class="{fade: startFade}">
         {{info}}
       </div>

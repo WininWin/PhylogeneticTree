@@ -5,10 +5,14 @@ TreeControllers.controller('HeaderController',['$scope', '$state', '$rootScope',
 
 	//Game Select
 	$scope.startparsimony = function(){
+		angular.element(document.getElementsByClassName('main-game-box')).css('width', "750px");
+
 		$state.go('app.parsimony-start');
 	};
 
 	$scope.startupgma = function(){
+		angular.element(document.getElementsByClassName('main-game-box')).css('width', "100%");
+
 		$state.go('app.upgma');
 	};
 
@@ -326,7 +330,7 @@ TreeControllers.controller('parsimony-EndController',['$scope', '$state', '$root
 
 TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','UPGMAModel', function($scope,$state, $rootScope, UPGMAModel) {
 
-	
+	angular.element(document.getElementsByClassName('main-game-box')).css('width', "100%");
 
 	$scope.init_start_point_y = 310;
 
@@ -387,8 +391,9 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	
 	function makeSVG(tag, attrs) {
             var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
-            for (var k in attrs)
+            for (var k in attrs){
                 el.setAttribute(k, attrs[k]);
+            }
             return el;
         }
 
@@ -397,6 +402,8 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$scope.minimum_pair = UPGMAModel.getMinimumPair($rootScope.matrix);
 	$rootScope.button_count = 0;
 	$scope.tree_info = "";
+
+	$rootScope.old_matrix = {};
 
 	$scope.height_info = "";
 
@@ -428,12 +435,14 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 		'D' : [640, 310]
 	};
 
+
+
 	$scope.height = 0;
 	$rootScope.is_solved = true;
 	$scope.max_height = 0;
 
 	$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
-	$scope.subInst = "You should remember the distance matrix before step 2";
+	$scope.subInst = "You can click Species below the tree";
 	angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
 
 	$scope.$watch('is_solved', function(newValue, oldValue){
@@ -442,14 +451,14 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 			if(newValue){
 				$scope.equation = "";
 				$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
-				$scope.subInst = "You should remember the distance matrix before step 2";
+				$scope.subInst = "You can click Species or Green node circle";
 				angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
 			}
 			else{
 				$scope.upgmaInst = "Step 2 : Fill out the new distance matrix";
-				$scope.subInst = "Calcualte: ";
-				$scope.equation = "\\quad d_{k,l} \\quad for \\quad all \\quad l, where \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}"
+				$scope.subInst = "Calculate: ";
+				$scope.equation = "\\quad d_{k,l} \\quad \\text{for all} \\quad l, \\text{where} \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}"
 				angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).addClass("upgma-curr-step");
 			}
@@ -466,14 +475,19 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$scope.$watch('selected_button', function(newValue, oldValue){
 
 		//	var is_solved = true;
-		
+		//$rootScope.old_matrix = {};
 
+		
 		
 		var check_key = "";
 		var keys = [];
 		var not_selected_keys = [];
 
 		if($rootScope.button_count === 2){
+			
+
+			console.log($rootScope.old_matrix);
+
 			for(var key in newValue){
 				if(newValue[key]){
 					keys.push(key);
@@ -487,6 +501,14 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 			check_key = keys.join('');
 
 			if(($scope.minimum_pair).indexOf(check_key)!== -1 && $rootScope.is_solved){
+
+				for(var copykey in $rootScope.matrix){
+				$rootScope.old_matrix[copykey] = {};
+				for(var incopykey in $rootScope.matrix[copykey]){
+					$rootScope.old_matrix[copykey][incopykey] = $rootScope.matrix[copykey][incopykey];
+				}
+				}
+
 				$scope.height = $rootScope.matrix[keys[0]][keys[1]]/2;
 
 				
@@ -618,11 +640,20 @@ TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootS
 					}
 				}
 			}
+
+			if($rootScope.is_solved){
+				$rootScope.old_matrix = {};
+			}
 		}	
 
 		else{
+			 $scope.startFade = true;
 			$scope.fontcolor = {'color' : 'Red'}
 			$scope.info = "Wrong";
+			$timeout(function(){
+			 $scope.startFade = false;
+            $scope.hidden = true;
+       			 }, 2000);
 			
 		}
 

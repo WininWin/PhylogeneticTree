@@ -1,7 +1,4 @@
 <div ng-controller='upgmaController'>
-	
-
-<div layout="column">
 	<div class="treeSet md-title" layout="row" id="upgma-inst" layout-align="center center">
 		{{upgmaInst}}
 	</div>
@@ -12,6 +9,9 @@
 	</div>
 
 
+<div layout="row" layout-xs="column">
+	
+
   <div id="matrix-view" flex ui-view="matrix">
   
   </div>
@@ -19,10 +19,12 @@
   
   </div>
 
-  <div layout="column" layout-align="start start">
+  
+</div>
+
+<div layout="column" layout-align="start start">
 		<div class="md-button md-raised md-primary" ng-click="upgmarefresh()">New Game</div>
 		
 	</div>
-</div>
 
 </div>
