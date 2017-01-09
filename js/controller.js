@@ -369,20 +369,22 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 
 	var bts = function button_select(key){
 
-		
-
-		$scope.selected_style[key] = {
+		if(!($rootScope.upgma_done)){
+			$scope.selected_style[key] = {
 			'border' : '3px solid Blue',
 			'fill' : 'blue'
+			}
+
+			$rootScope.button_count++;
+			if($rootScope.button_count > 2){
+				$rootScope.button_count = 2;
+			}
+
+
+			$scope.selected_button[key] = true;
 		}
 
-		$rootScope.button_count++;
-		if($rootScope.button_count > 2){
-			$rootScope.button_count = 2;
-		}
-
-
-		$scope.selected_button[key] = true;
+		
 
 	};
 
@@ -440,6 +442,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$scope.height = 0;
 	$rootScope.is_solved = true;
 	$scope.max_height = 0;
+	$rootScope.upgma_done = 0;
 
 	$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
 	$scope.subInst = "You can click Species below the tree";
@@ -467,7 +470,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 			$scope.upgmaInst = "UPGMA tree for " + $rootScope.matrix[keys[0]].name;
 			angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
 			angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
-			
+			$rootScope.upgma_done = 1;
 		}
 			
 	}, true);
