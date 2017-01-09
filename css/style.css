@@ -121,10 +121,11 @@
 	border: 2px solid lightgreen;
 }
 #svg-container { 
-	display: inline-block;
-	position: relative;
-	width: 100%;
-	
-	vertical-align: middle; 
-	overflow: hidden; 
+	 width : 100%;
+	 height : 100%;
+}
+
+#svg-layout{ /* svg into : object, img or inline */
+  width: 100%;
+  height: 100%;
 }
