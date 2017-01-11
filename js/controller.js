@@ -406,7 +406,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$scope.tree_info = "";
 
 	$rootScope.old_matrix = {};
-
+	$rootScope.need_ori = false;
 	$scope.height_info = "";
 
 	$scope.selected_button = {
@@ -455,13 +455,15 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 				$scope.equation = "";
 				$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
 				$scope.subInst = "You can click Species or Green node circle";
+				$scope.subInstTwo = "";
 				angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
 			}
 			else{
 				$scope.upgmaInst = "Step 2 : Fill out the new distance matrix";
 				$scope.subInst = "Calculate: ";
-				$scope.equation = "\\quad d_{k,l} \\quad \\text{for all} \\quad l, \\text{where} \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}"
+				$scope.equation = "\\quad d_{k,l} \\quad \\text{for all} \\quad l, \\text{where} \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}";
+				$scope.subInstTwo = "Push Enter key for checking the distance";
 				angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).addClass("upgma-curr-step");
 			}
@@ -488,8 +490,6 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 
 		if($rootScope.button_count === 2){
 			
-
-			console.log($rootScope.old_matrix);
 
 			for(var key in newValue){
 				if(newValue[key]){
@@ -566,6 +566,9 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 				$rootScope.button_count = 0;
 				$scope.minimum_pair = UPGMAModel.getMinimumPair($rootScope.matrix);
 				$rootScope.is_solved = false;
+
+				
+				$rootScope.need_ori = true;
 				if($scope.height > $scope.max_height){
 					$scope.max_height = $scope.height;
 				}
@@ -603,21 +606,27 @@ TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootS
 	
 	$rootScope.matrix_is_sovled ={};
 	$rootScope.user_input = {};
-
+	
 	$scope.info = "";
 	$scope.hidden = true;
+	$scope.ori_matrix = {};
 	for(var key in $rootScope.matrix){
 		$rootScope.matrix_is_sovled[key]= {};
+		$scope.ori_matrix[key] = {};
 		$rootScope.user_input[key] = {};
 		for(var in_key in $rootScope.matrix[key]){
+			$scope.ori_matrix[key][in_key] = $rootScope.matrix[key][in_key];
 			if(in_key==='name' || in_key==='DNA'){
+				
 				continue;
 			}
 
+		
 			$rootScope.matrix_is_sovled[key][in_key] = true;
 		}
 	}
 
+	
 
 	$scope.input_check = function(outkey, key){
 

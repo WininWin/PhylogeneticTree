@@ -1,12 +1,44 @@
 <div ng-controller='upgma-matrixController'>
 	<div layout="row" layout-align="center" class="treeSet md-title">Distance Matrix</div>
-<div ng-hide="is_solved" >
-  <div layout="row" layout-align="center" class="treeSet md-subhead">Old Matrix</div>
+
+<div class="ori-matrix" ng-hide="!need_ori" >
+  <div layout="row" layout-align="center" class="treeSet md-subhead">Original Matrix</div>
+   <md-table-container>
+  <table id="distance-table" md-table ng-model="ori_matrix" >
+    <thead md-head >
+      <tr md-row>
+        <th md-column>Species</th>
+        <th md-column  ng-repeat="(key,item) in ori_matrix"><span>{{item.name}}</span></th>
+      </tr>
+    </thead>
+    <tbody md-body>
+      <tr md-row ng-repeat="(outkey, item) in ori_matrix">
+        <td md-cell>
+          {{item.name}}
+        </td>
+        <td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">
+
+          <div>{{distance}}</div>
+        
+        </td>
+
+      </tr>
+      
+    </tbody>
+  </table>
+</md-table-container>
+</div>
+
+
+
+
+<div class="old-matrix" ng-hide="is_solved" >
+  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved">Old Matrix</div>
    <md-table-container>
   <table id="distance-table" md-table ng-model="old_matrix" >
     <thead md-head >
       <tr md-row>
-        <th md-column >Species</th>
+        <th md-column ng-hide="is_solved">Species</th>
         <th md-column  ng-repeat="(key,item) in old_matrix"><span>{{item.name}}</span></th>
       </tr>
     </thead>
@@ -29,10 +61,14 @@
 </div>
  
 
-<div>
+<div class="new-matrix">
 
-  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved">New Matrix</div>
+  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved&&!need_ori">New Matrix</div>
 
+  
+  <div class="treeSet md-subhead" layout="row" id="sub-inst" layout-align="center center">
+    {{subInstTwo}}
+  </div>
 	<md-table-container >
   <table id="distance-table" md-table ng-model="matrix">
     <thead md-head >
@@ -49,7 +85,7 @@
     		<td md-cell ng-repeat="(key, distance) in item" ng-if="key!='DNA' && key!='name'">
 
           <div ng-if="matrix_is_sovled[outkey][key]">{{distance}}</div>
-          <div ng-if="!matrix_is_sovled[outkey][key]" id = "table-input" ><input ng-model="user_input[outkey][key]" type="text" ng-change = "input_check(outkey,key)"></div>
+          <div ng-if="!matrix_is_sovled[outkey][key]" id = "table-input" ><input ng-model="user_input[outkey][key]" type="text" check-enter = "input_check(outkey,key)"></div>
     		</td>
 
     	</tr>
