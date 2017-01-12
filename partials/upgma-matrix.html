@@ -33,7 +33,8 @@
 
 
 <div class="old-matrix" ng-hide="is_solved" >
-  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved">Old Matrix</div>
+<HR>
+  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved">Previous Matrix</div>
    <md-table-container>
   <table id="distance-table" md-table ng-model="old_matrix" >
     <thead md-head >
@@ -58,12 +59,13 @@
     </tbody>
   </table>
 </md-table-container>
+<HR>
 </div>
  
 
 <div class="new-matrix">
 
-  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved&&!need_ori">New Matrix</div>
+  <div layout="row" layout-align="center" class="treeSet md-subhead" ng-hide="is_solved&&!need_ori">Current Matrix</div>
 
   
   <div class="treeSet md-subhead" layout="row" id="sub-inst" layout-align="center center">

@@ -444,8 +444,8 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$scope.max_height = 0;
 	$rootScope.upgma_done = 0;
 
-	$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
-	$scope.subInst = "You can click Species below the tree";
+	$scope.upgmaInst = "Group the two most closely related species or clusters of species";
+	$scope.subInst = "To select a pair, click on the green nodes";
 	angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
 
 	$scope.$watch('is_solved', function(newValue, oldValue){
@@ -453,17 +453,17 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 		if(keys.length !== 1){
 			if(newValue){
 				$scope.equation = "";
-				$scope.upgmaInst = "Step 1 : find the pair of clusters that minimizes distance";
-				$scope.subInst = "You can click Species or Green node circle";
+				$scope.upgmaInst = "Group the two most closely related species or clusters of species";
+				$scope.subInst = "To select a pair, click on the green nodes";
 				$scope.subInstTwo = "";
 				angular.element(document.getElementById('tree-view')).addClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).removeClass("upgma-curr-step");
 			}
 			else{
-				$scope.upgmaInst = "Step 2 : Fill out the new distance matrix";
-				$scope.subInst = "Calculate: ";
-				$scope.equation = "\\quad d_{k,l} \\quad \\text{for all} \\quad l, \\text{where} \\quad d_{i,j} = \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}";
-				$scope.subInstTwo = "Push Enter key for checking the distance";
+				$scope.upgmaInst = "Fill out the new distance matrix";
+				$scope.subInst = "";
+				$scope.equation = "\\quad \\text{For any two clusters $C_i$ and $C_j$ in the current tree, calculate} \\frac{1}{|C_{i}||C_{j}|} \\sum_{p \\in C_{i},q \\in C_{j}} d_{pg}, \\text{ where $d$ is the original distance matrix}";
+				$scope.subInstTwo = "Press the Enter key on keyboard to check your answer";
 				angular.element(document.getElementById('tree-view')).removeClass("upgma-curr-step");
 				angular.element(document.getElementById('matrix-view')).addClass("upgma-curr-step");
 			}
