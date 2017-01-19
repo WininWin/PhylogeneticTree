@@ -67,7 +67,7 @@
 	<div class = "treeSet"layout="row" layout-align="space-around center">
 
 	
-	<div layout="column" layout-align="center center" ng-repeat = "(key, model) in tempmodel"  id="DNA-model" ng-model="model" ng-hide="!model.name" ng-style="selected_style[key]">
+	<div layout="column" layout-align="center center" ng-repeat = "(key, model) in tempmodel" id="DNA-model" ng-model="model" ng-hide="!model.name" ng-style="selected_style[key]">
 		
 		<div class="md-button md-primary md-hue-1" layout="row" style="height:60px" ng-click='button_select(key)'>
 			<img class="image_button" ng-src="./images/{{model.name}}.png" >

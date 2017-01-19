@@ -10,6 +10,18 @@ var setC = ['CTGGAG','ATGACC','AGATAT'];
 var setD_name = ['Tulip', 'Rose', 'Crocodile'];
 var setD = ['TTAGAG', 'ATGCCC','AGAGAT'];
 
+var set2A_name = ['Sunflower', 'Horse', 'Cow','Human'];
+var set2A = ['AATCGA', 'CAGTCA', 'GGACTG', 'TCGATT'];
+var set2B_name = ['Rose','Dog','Whale', 'Chimpanzee'];
+var set2B = ['AATCGG', 'AAGTCA', 'GGCCTG', 'TCGCTT'];
+
+var set2C_name = ['Tulip', 'Cow', 'Horse', 'Mouse'];
+var set2C = ['AAACGG', 'AAGTGC', 'AGCCTA', 'TCACTT'];
+var set2D_name = ['Mushroom', 'Chimpanzee' , 'Mouse', 'Dog'];
+var set2D = ['TAACAG', 'CAGTGA' , 'ATCCGT', 'ATACTA'];
+
+
+
 //Tree leaf is fixed to 4 
 TreeServices.factory('ParsimonyModel', function(){
 
@@ -195,41 +207,44 @@ TreeServices.factory('UPGMAModel', function(){
 	}
 
 	function generate_Matrix(){
+
+		var set_choice = Math.random();
+
 		var random = Math.round(Math.random()*2);
 		var matrix = {
 			
 		};
 		
 			matrix['A'] = {
-				name : setA_name[random],
-				DNA : setA[random],
+				name : set_choice>0.5?setA_name[random]:set2A_name[random],
+				DNA : set_choice>0.5?setA[random]:set2A[random],
 				'A' : 0,
-				'B' : gen_random(3,5),
-				'C' : gen_random(8,5),
-				'D' : gen_random(8,5)
+				'B' : set_choice>0.5?gen_random(3,5):gen_random(2,3),
+				'C' : set_choice>0.5?gen_random(8,5):gen_random(5,3),
+				'D' : set_choice>0.5?gen_random(8,5):gen_random(8,3)
 			};
 
 			matrix['B'] = {
-				name : setB_name[random],
-				DNA : setB[random],
+				name : set_choice>0.5?setB_name[random]:set2B_name[random],
+				DNA : set_choice>0.5?setB[random]:set2B[random],
 				'A' : 0,
 				'B' : 0,
-				'C' : gen_random(8,5),
-				'D' : gen_random(8,5)
+				'C' : set_choice>0.5?gen_random(8,5):gen_random(5,3),
+				'D' : set_choice>0.5?gen_random(8,5):gen_random(8,3)
 			};
 
 			matrix['C'] = {
-				name : setC_name[random],
-				DNA : setC[random],
+				name : set_choice>0.5?setC_name[random]:set2C_name[random],
+				DNA : set_choice>0.5?setC[random]:set2C[random],
 				'A' : 0,
 				'B' : 0,
 				'C' : 0,
-				'D' : gen_random(3,5)
+				'D' : set_choice>0.5?gen_random(3,5):gen_random(8,3)
 			};
 
 			matrix['D'] ={
-				name : setD_name[random],
-				DNA : setD[random],
+				name : set_choice>0.5?setD_name[random]:set2D_name[random],
+				DNA : set_choice>0.5?setD[random]:set2D[random],
 				'A' : 0,
 				'B' : 0,
 				'C' : 0,
@@ -282,7 +297,59 @@ TreeServices.factory('UPGMAModel', function(){
 		return set;
 	}
 
+	(function() {
+  /**
+   * Decimal adjustment of a number.
+   *
+   * @param {String}  type  The type of adjustment.
+   * @param {Number}  value The number.
+   * @param {Integer} exp   The exponent (the 10 logarithm of the adjustment base).
+   * @returns {Number} The adjusted value.
+   */
+  function decimalAdjust(type, value, exp) {
+    // If the exp is undefined or zero...
+    if (typeof exp === 'undefined' || +exp === 0) {
+      return Math[type](value);
+    }
+    value = +value;
+    exp = +exp;
+    // If the value is not a number or the exp is not an integer...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+      return NaN;
+    }
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+  }
+
+  // Decimal round
+  if (!Math.round10) {
+    Math.round10 = function(value, exp) {
+      return decimalAdjust('round', value, exp);
+    };
+  }
+  // Decimal floor
+  if (!Math.floor10) {
+    Math.floor10 = function(value, exp) {
+      return decimalAdjust('floor', value, exp);
+    };
+  }
+  // Decimal ceil
+  if (!Math.ceil10) {
+    Math.ceil10 = function(value, exp) {
+      return decimalAdjust('ceil', value, exp);
+    };
+  }
+})();
+
 	function matrix_update(matrix, itemOne, itemTwo){
+
+		var setOne_count = itemOne.name.split(',').length; 
+		var setTwo_count = itemTwo.name.split(',').length;
+
 
 		var new_name = '(' + itemOne.name  +',' + itemTwo.name + ')';
 		var new_DNA = itemOne.DNA + itemTwo.DNA;
@@ -301,20 +368,37 @@ TreeServices.factory('UPGMAModel', function(){
 		matrix[newkey] = { name : new_name,
 							DNA : new_DNA};
 		
+		var first_call = 1;
 
 		for(var key in matrix){
 			if(key !== newkey){
 				matrix[key][newkey] = 0;
 				for(var innerkey in matrix[key]){
 					if(keys.indexOf(innerkey) !== -1 ){
-						matrix[key][newkey] = matrix[key][newkey] + (matrix[key][innerkey]/2);
+						if(first_call){
+							
+							first_call = 0;
+							matrix[key][newkey] = matrix[key][newkey] + (matrix[key][innerkey]*setOne_count/(setOne_count + setTwo_count));
+
+						}
+						else{
+							
+							first_call = 1;
+							matrix[key][newkey] = matrix[key][newkey] + (matrix[key][innerkey]*setTwo_count/(setOne_count + setTwo_count));
+
+						}
+
+						matrix[key][newkey] = (matrix[key][newkey]+"").includes('.')?Math.round10(matrix[key][newkey],-2):matrix[key][newkey];
+						
 						matrix[newkey][key] = matrix[key][newkey];
 						delete matrix[key][innerkey];
+		
 					}
 
 				}
 			}
 		}
+
 
 		matrix[newkey][newkey] = 0;
 	
@@ -336,6 +420,104 @@ TreeServices.factory('UPGMAModel', function(){
 		updateMatrix : function(matrix, itemOne, itemTwo){
 			return matrix_update(matrix, itemOne, itemTwo);
 		}
+	};
+
+
+});
+
+TreeServices.factory('NeighborJoin', function(){
+
+
+
+	function make_Q_matrix(matrix){
+		var q_matrix = [];
+
+		var n = matrix.length;
+
+
+		for(var k = 0; k < matrix.length; k++){
+			q_matrix[k] = [];
+			for(var p = 0; p < matrix[k].length; p++){
+				if(k===p){
+					q_matrix[k].push(0);
+
+				}
+				else{
+					var k_sum = matrix[k].reduce(function(a,b){
+						return a+b;
+					},0);
+					var p_sum = matrix[p].reduce(function(a,b){
+						return a+b;
+					},0);
+
+					var q_item = (n-2)*matrix[k][p] - k_sum - p_sum;
+
+					q_matrix[k][p] = q_item;
+				}
+
+
+			}
+		}
+
+		return q_matrix;
+
+	}
+
+	function get_minimum_pair(matrix){
+
+		var keys = [];
+		var min = Number.MAX_VALUE;
+
+		for(var i = 0; i < matrix.length; i++){
+			for(var j = 0; j < matrix.length;j++){
+				if(matrix[i][j] < min){
+					min = matrix[i][j];
+					keys = [];
+					keys.push(i);
+					keys.push(j);
+				}
+			}
+		}
+
+		return keys;
+
+	}
+
+	function get_new_node (matrix, f, g) {
+		// body...
+		var new_node = {};
+
+		var new_distance = 0;
+
+		new_distance = 0.5 * matrix[f][g] + 0.5/(matrix.length-2) * (matrix[k].reduce(function(a,b){
+						return a+b;
+					},0) - matrix[p].reduce(function(a,b){
+						return a+b;
+					},0));
+
+
+
+	}
+
+	function update_disatace_matrix (argument) {
+		// body...
+	}
+
+	function generate_matrix () {
+		
+
+
+	}
+
+
+
+
+	return {
+
+		getQmatrix : function(matrix){
+			return make_Q_matrix(matrix);
+		},
+
 	};
 
 

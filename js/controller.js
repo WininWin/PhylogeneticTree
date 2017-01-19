@@ -344,6 +344,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 			$rootScope.matrix_is_sovled ={};
 	$rootScope.user_input = {};
 
+		$rootScope.matrix_init();
 	for(var key in $rootScope.matrix){
 		$rootScope.matrix_is_sovled[key]= {};
 		$rootScope.user_input[key] = {};
@@ -368,6 +369,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	};
 
 	var bts = function button_select(key){
+		
 
 		if(!($rootScope.upgma_done)){
 			$scope.selected_style[key] = {
@@ -408,6 +410,8 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 	$rootScope.old_matrix = {};
 	$rootScope.need_ori = false;
 	$scope.height_info = "";
+
+
 
 	$scope.selected_button = {
 		'A' : false,
@@ -501,6 +505,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 				}
 			}
 
+
 			check_key = keys.join('');
 
 			if(($scope.minimum_pair).indexOf(check_key)!== -1 && $rootScope.is_solved){
@@ -514,7 +519,6 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 
 				$scope.height = $rootScope.matrix[keys[0]][keys[1]]/2;
 
-				
 				UPGMAModel.updateMatrix($rootScope.matrix, $rootScope.matrix[keys[0]], $rootScope.matrix[keys[1]]);
 			
 				$scope.height_info = "Height for " + $rootScope.matrix[check_key].name + ": " + $scope.height;
@@ -545,10 +549,14 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 
 				var line_one = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[0]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2: $scope.points[keys[0]][1], 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
 				var line_two = makeSVG("line", {x1 : $scope.points[keys[1]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2: $scope.points[keys[1]][1], 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
+			
+
 				var line_three = makeSVG("line", {x1 : $scope.points[keys[0]][0], x2 : $scope.points[keys[1]][0], y1 : ($scope.init_start_point_y - ($scope.height*30)), y2 : ($scope.init_start_point_y - ($scope.height*30)), 'stroke-width' : 2, stroke : 'blue', class : 'add-line'});
 				var circle = makeSVG("circle", {"cx" : (startpoint+diff/2), "cy" : ($scope.init_start_point_y - ($scope.height*30)) , r:"8" , fill:"green", class : "node-circle"});
 				
-				$scope.points[check_key] = [(startpoint+diff/2), ($scope.points[keys[1]][1] - ($scope.height*30))];
+
+
+				$scope.points[check_key] = [(startpoint+diff/2), ($scope.init_start_point_y - ($scope.height*30))];
 
 				angular.element(document.getElementById('svg-layout')).append(line_one, line_two, line_three, circle);
 
@@ -604,6 +612,7 @@ TreeControllers.controller('upgmaController',['$scope', '$state', '$rootScope','
 TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootScope','UPGMAModel','$timeout' , function($scope,$state, $rootScope, UPGMAModel,$timeout) {
 
 	
+$rootScope.matrix_init = function(){
 	$rootScope.matrix_is_sovled ={};
 	$rootScope.user_input = {};
 	
@@ -626,6 +635,8 @@ TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootS
 		}
 	}
 
+};
+	
 	
 
 	$scope.input_check = function(outkey, key){
@@ -674,12 +685,14 @@ TreeControllers.controller('upgma-matrixController',['$scope', '$state', '$rootS
 	}
 
 
+	$rootScope.matrix_init();
 
 
 
 }]);
 
 TreeControllers.controller('upgma-treeController',['$scope', '$state', '$rootScope','UPGMAModel', function($scope,$state, $rootScope, UPGMAModel) {
+
 
 	$rootScope.tempmodel = {};
 
